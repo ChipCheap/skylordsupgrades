@@ -143,43 +143,31 @@ public class Cardbase {
             System.exit(0);
         }
 
-        JSONObject data;
-        String content;
-
         try {
-            content = readFile(path, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            return redownloadAPI("\nAn error occured when trying to read the API!", url, path, tries);
-        }
+            String content = readFile(path, StandardCharsets.UTF_8);
 
-        try {
-            data = new JSONObject(content);
-        }
-        catch (Exception e){
-            return redownloadAPI("\nAn error occured when parsing!", url, path, tries);
-        }
+            JSONObject data = new JSONObject(content);
 
-        if(data.getBoolean("Success")){
-            return data.getJSONArray("Result");
+            if(data.getBoolean("Success")){
+                return data.getJSONArray("Result");
+            }
+            else{
+                System.out.println("\nAPI-call was unsuccessful!");
+            }
         }
-        else{
-            return redownloadAPI("\nAPI-call was unsuccessful!", url, path, tries);
+        catch (IOException e){
+            System.out.println("\nAn error occured when trying to read the API!");
         }
-    }
-
-    /**
-     * This method redownloads the API during parsing
-     */
-    private static JSONArray redownloadAPI(String error, String url, String path, int tries){
-        System.out.println(error);
+        catch (JSONException e){
+            System.out.println("\nAn error occured when parsing!");
+        }
 
         try{
             Thread.sleep(2000);
         }
-        catch (InterruptedException e){}
+        catch (InterruptedException ie){}
 
         System.out.println("Attempting to redownload ...");
-
         System.out.println(downloadAPI(url, path));
 
         return parseAPI(url, path, tries+1);
