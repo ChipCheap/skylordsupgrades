@@ -1,0 +1,56 @@
+package skylordtools.map;
+
+import java.util.*;
+
+import org.json.JSONObject;
+
+import skylordtools.card.Card;
+
+
+public class BFMap{
+    private String name;
+    private String description;
+    private List<String> difficulties;
+    private List<String> standard;
+    private List<String> advanced;
+    private List<String> expert;
+    private int players;
+
+    public BFMap(JSONObject obj){
+        name = obj.getString("Name");
+        description = obj.getString("Description");
+        players = obj.getInt("Players");
+        
+        standard = new ArrayList<String>();
+        for(int i=0;i<obj.getJSONArray("Standard").length();i++)
+        {
+        	String cName = 
+        			obj.getJSONArray("Standard").getJSONObject(i).isNull("Name")
+        				? ""
+        			:obj.getJSONArray("Standard").getJSONObject(i).getString("Name");
+        	standard.add(cName);
+        }
+        
+        advanced = new ArrayList<String>();
+        for(int i=0;i<obj.getJSONArray("Advanced").length();i++)
+        {
+        	String cName = 
+        			obj.getJSONArray("Advanced").getJSONObject(i).isNull("Name")
+        				? ""
+        			:obj.getJSONArray("Advanced").getJSONObject(i).getString("Name");
+        	advanced.add(cName);
+        }
+        
+        expert = new ArrayList<String>();
+        for(int i=0;i<obj.getJSONArray("Expert").length();i++)
+        {
+        	String cName = 
+        			obj.getJSONArray("Expert").getJSONObject(i).isNull("Name")
+        				? ""
+        			:obj.getJSONArray("Expert").getJSONObject(i).getString("Name");
+        	expert.add(cName);
+        }
+    }
+    
+    
+}
