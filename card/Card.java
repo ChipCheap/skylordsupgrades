@@ -84,12 +84,12 @@ public class Card {
                         obj.getJSONArray("Upgrades").getJSONObject(i).getInt("Era");
 
                 //Check if map is null
-                boolean mapExists = obj.getJSONArray("Upgrades").getJSONObject(i).isNull("Map");
+                boolean mapIsNull = obj.getJSONArray("Upgrades").getJSONObject(i).isNull("Map");
 
-                String mapName = mapExists ? "" : obj.getJSONArray("Upgrades").getJSONObject(i)
+                String mapName = mapIsNull ? "" : obj.getJSONArray("Upgrades").getJSONObject(i)
                         .getJSONObject("Map").getString("Name");
 
-                Difficulty mapDif = mapExists ? Difficulty.Unknown : Difficulty.fromInteger(obj.
+                Difficulty mapDif = mapIsNull ? Difficulty.Unknown : Difficulty.fromInteger(obj.
                         getJSONArray("Upgrades").getJSONObject(i).getJSONObject("Map").getInt("Difficulty"));
 
             upgrades.add(new Upgrade(desc, era, mapName, mapDif));
