@@ -1,8 +1,5 @@
 package skylordtools.map;
 
-/**
- * Created by XY on 02.01.2017.
- */
 public enum Difficulty {
     Standard,
     Advanced,

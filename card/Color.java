@@ -1,16 +1,19 @@
 package skylordtools.card;
 
+import com.sun.org.apache.bcel.internal.classfile.Unknown;
+import javafx.scene.effect.Shadow;
+
 public enum Color {
+    Frost,
     Fire,
     Nature,
-    Frost,
     Shadow,
     Twilight,
-    Bandit,
-    Stonekin,
     LostSouls,
-    Amii,
     Neutral,
+    Stonekin,
+    Bandit,
+    Amii,
     Unknown;
 
     /**

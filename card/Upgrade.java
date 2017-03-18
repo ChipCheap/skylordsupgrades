@@ -2,9 +2,6 @@ package skylordtools.card;
 
 import skylordtools.map.Difficulty;
 
-/**
- * Created by XY on 02.01.2017.
- */
 public class Upgrade {
     private String description;
     private int era;

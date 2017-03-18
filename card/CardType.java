@@ -1,8 +1,8 @@
 package skylordtools.card;
 
 public enum CardType {
-    Creature,
     Spell,
+    Creature,
     Building,
     Unknown;
 

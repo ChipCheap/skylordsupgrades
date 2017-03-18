@@ -1,17 +1,19 @@
 package skylordtools;
 
+import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import skylordtools.card.Card;
 import skylordtools.map.BFMap;
-import java.util.*;
-import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.json.*;
-import org.apache.commons.io.FileUtils;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cardbase {
     private static final String CardsURL = "https://cardbase.skylords.eu/cards/GetCards";
@@ -21,102 +23,68 @@ public class Cardbase {
 
     public static List<Card> getCards(){
         System.out.println("Trying to generate cardlist ..");
-        return parseCards(parseAPI(CardsURL, CardsPath));
+        return parseData(parseAPI(CardsURL, CardsPath, true), Card.class);
     }
 
     public static List<BFMap> getMaps(){
         System.out.println("Trying to generate maplist ..");
-        return parseMaps(parseAPI(MapsURL, MapsPath));
+        return parseData(parseAPI(MapsURL, MapsPath, true), BFMap.class);
     }
 
     /**
-     * Tries to download the CardBase-API from https://cardbase.skylords.eu/cards/GetCards
-     * and tries to write it to the file "./GetCards.json" by calling the method
-     * downloadAPI(String, String) with
-     * downloadAPI("ttps://cardbase.skylords.eu/cards/GetCards", "./GetCards.json")
-     *
-     * @return the error, or success message
+     * Tries to download the CardBase Card-API
+     * and tries to write it to the file "./GetCards.json".
      */
     public static void downloadCards(){
         System.out.println("Trying to download cards API ...");
-        System.out.println(downloadAPI(CardsURL, CardsPath));
+        try {
+            downloadAPI(CardsURL, CardsPath);
+        }
+        catch(DownloadException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
-     * Tries to download the CardBase-API from https://cardbase.skylords.eu/Maps/GetMaps
-     * and tries to write it to the file "./GetMaps.json" by calling the method
-     * downloadAPI(String, String) with
-     * downloadAPI("https://cardbase.skylords.eu/Maps/GetMaps", "./GetMaps.json")
-     *
-     * @return the error, or success message
+     * Tries to download the CardBase Maps-API
+     * and tries to write it to the file "./GetMaps.json".
      */
     public static void downloadMaps(){
         System.out.println("Trying to download maps API ...");
-        System.out.println(downloadAPI(CardsPath, CardsURL));
+        try {
+            downloadAPI(MapsURL, MapsPath);
+        }
+        catch(DownloadException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
-     * Parse the result of the Cardbase Card-API(http://cardbase.bfreborn.com/cards/GetCards)
+     * Parse the result of the Cardbase API
      *
-     * @param data the JSONArray of all cards from the API
-     * @return the Cards in a ArrayList<Card>
-     * @throws JSONException if the API gets changed, this might occur
+     * @param data the JSONArray of the data from the API
+     * @return the Cards in a ArrayList<T>
      */
-    private static List<Card> parseCards(JSONArray data) throws JSONException{
-        List<Card> cards = new ArrayList<Card>();
+    private static <T> List<T> parseData(JSONArray data, Class<T> typeKey){
+        List<T> dataInList = new ArrayList<>();
 
         try {
-            for (Object card : data) {
-                cards.add(new Card((JSONObject) card));
+            for (Object o : data) {
+                dataInList.add(typeKey.getConstructor(JSONObject.class).newInstance((JSONObject) o));
             }
         }
         catch (JSONException e){
-            System.out.println("Please redownload the Cards API (Options), if this problem persists,\n"+
-                    "the application is broken due to changes to the API, please let me know!");
-            return cards;
+            System.out.println("Changes in the cardbase API! The application will now exit.");
+            System.exit(1);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.exit(1);
         }
 
         System.out.println("Success!");
 
-        return cards;
-    }
-
-    /**
-     * Parse the result of the Cardbase Map-API(http://cardbase.bfreborn.com/Maps/GetMaps)
-     *
-     * @param data the JSONArray of all maps from the API
-     * @return the Cards in a ArrayList<BFMap>
-     * @throws JSONException if the API gets changed, this might occur
-     */
-    private static List<BFMap> parseMaps(JSONArray data) throws JSONException{
-        List<BFMap> maps = new ArrayList<BFMap>();
-
-        try {
-            for (Object map : data) {
-                maps.add(new BFMap((JSONObject) map));
-            }
-        }
-        catch (JSONException e){
-            System.out.println("Please redownload the Maps API (Options), if this problem persists,\n"+
-                    "the application is broken due to changes to the API, please let me know!");
-            return maps;
-        }
-
-        System.out.println("Success!");
-
-        return maps;
-    }
-
-    /**
-     * Call parseAPI(String, String, int) with 0 tries.
-     * This means: getCards(url, path, 0)
-     *
-     * @param url the url where the API is located
-     * @param path the path where the API should be saved to or where it is located
-     * @return the result of the API in a JSONArray
-     */
-    private static JSONArray parseAPI(String url, String path){
-        return parseAPI(url, path, 0);
+        return dataInList;
     }
 
     /**
@@ -128,49 +96,42 @@ public class Cardbase {
      *
      * @param url the url where the API is located
      * @param path the path where the API should be saved to
-     * @param tries the amount of tries which have been made so far
+     * @param attemptDownload when an error occurs
+     *                        - if true: attempt to redownload the API and call the method again
+     *                        - if false: exit the Application
      * @return the result of the API in a JSONArray
      */
-    private static JSONArray parseAPI(String url, String path, int tries){
-        if (tries >= 5) {
-            System.out.println("Failed to get/read API after five tries. Exiting ...");
-
-            try{
-                Thread.sleep(2000);
-            }
-            catch (InterruptedException e){}
-
-            System.exit(0);
-        }
-
+    private static JSONArray parseAPI(String url, String path, boolean attemptDownload) {
         try {
-            String content = readFile(path, StandardCharsets.UTF_8);
-
+            String content = FileOperations.readFile(path, StandardCharsets.UTF_8);
             JSONObject data = new JSONObject(content);
 
-            if(data.getBoolean("Success")){
+            if(data.getBoolean("Success"))
                 return data.getJSONArray("Result");
+            else
+                throw new JSONException("API-call unsuccessful!");
+
+        }
+        catch (JSONException|IOException e1) {
+            if (attemptDownload){
+                try{
+                    downloadAPI(url, path);
+                    return parseAPI(url, path, false);
+                }
+                catch(DownloadException e2){
+                    System.out.println(e2.getMessage() + " The application will now exit.");
+
+                    System.exit(1);
+                }
             }
             else{
-                System.out.println("\nAPI-call was unsuccessful!");
+                System.out.println("Unable to parse the API. The application will now exit.");
+
+                System.exit(1);
             }
         }
-        catch (IOException e){
-            System.out.println("\nAn error occured when trying to read the API!");
-        }
-        catch (JSONException e){
-            System.out.println("\nAn error occured when parsing!");
-        }
 
-        try{
-            Thread.sleep(2000);
-        }
-        catch (InterruptedException ie){}
-
-        System.out.println("Attempting to redownload ...");
-        System.out.println(downloadAPI(url, path));
-
-        return parseAPI(url, path, tries+1);
+        return null;
     }
 
     /**
@@ -181,35 +142,19 @@ public class Cardbase {
      * @param path the path where the API should be saved to
      * @return the error, or success message
      */
-    private static String downloadAPI(String url, String path){
+    private static void downloadAPI(String url, String path) throws DownloadException{
         try{
             FileUtils.copyURLToFile(new URL(url), new File(path));
         }
         catch (MalformedURLException e){
-            return "Download failed! Something went wrong when trying to access \""+url+"\"";
+            throw new DownloadException("Download failed! An exception occurred when trying to access \""+url+"\"");
         }
         catch (IOException e){
-            return "Download failed! Something went wrong when trying to write to \""+path+"\"";
+            throw new DownloadException("Download failed! An exception occurred when trying to write to \""+path+"\"");
         }
         catch (Exception e){
-            return "Download failed! Something went wrong!";
+            throw new DownloadException("Download failed! An exception occurred!");
         }
-
-        return "Success!";
-    }
-
-
-    /**
-     * Reads the file in byte form and decodes it into a String
-     *
-     * @param path the path, where the file is located
-     * @param encoding the encoding which should be used when reading the file
-     * @return the contents of the file as a String
-     * @throws IOException if the file could not be read
-     */
-    private static String readFile(String path, Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, encoding);
     }
 }
 

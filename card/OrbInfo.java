@@ -1,5 +1,10 @@
 package skylordtools.card;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class OrbInfo {
     private String orbCode;
     private int neutral;
@@ -89,6 +94,52 @@ public class OrbInfo {
      */
     public int getShadow() {
         return this.shadow;
+    }
+
+    /**
+     * Generates all possible combinations of orbs, but not the different permutations
+     * @return a list of all possible orb-combinations
+     */
+    private static List<String> comboGenerator(){
+        List<String> combos = new ArrayList<String>();
+        String orbs = "RNBS";
+
+        Map<String, Integer> priority = new HashMap<String, Integer>();
+        priority.put("R", 0);
+        priority.put("N", 1);
+        priority.put("B", 2);
+        priority.put("S", 3);
+
+        for (char one: orbs.toCharArray()){
+            String c1 = String.valueOf(one);
+            combos.add(c1);
+
+            for (char two: orbs.toCharArray()){
+                String c2 = String.valueOf(two);
+
+                if (priority.get(c2) <= priority.get(c1)){
+                    combos.add(c2+c1);
+                }
+
+                for (char three: orbs.toCharArray()){
+                    String c3 = String.valueOf(three);
+
+                    if (priority.get(c3) <= priority.get(c2) && priority.get(c2) <= priority.get(c1)){
+                        combos.add(c3+c2+c1);
+                    }
+
+                    for (char four: orbs.toCharArray()){
+                        String c4 = String.valueOf(four);
+
+                        if (priority.get(c4) <= priority.get(c3) && priority.get(c3) <= priority.get(c2) && priority.get(c2) <= priority.get(c1)){
+                            combos.add(c4+c3+c2+c1);
+                        }
+                    }
+                }
+            }
+        }
+
+        return combos;
     }
 
 }

@@ -1,10 +1,13 @@
 package skylordtools.card;
 
+import com.sun.org.apache.bcel.internal.classfile.Unknown;
+import javafx.scene.effect.Shadow;
+
 public enum Affinity {
     Neutral,
+    Frost,
     Fire,
     Nature,
-    Frost,
     Shadow,
     Unknown;
 

@@ -1,15 +1,14 @@
 package skylordtools.card;
 
 import org.json.*;
+import skylordtools.Cardbase;
 import skylordtools.map.Difficulty;
 
 import java.util.*;
 
 public class Card {
-    //This is for determining a cards id.
-    static int cardCounter=0;
+    public static List<Card> allCards = Cardbase.getCards();
 
-    private int id;
     private String name;
     private Rarity rarity;
     private int cost;
@@ -32,7 +31,6 @@ public class Card {
      * @param obj a card, extracted from the CardBase-API (http://cardbase.bfreborn.com/cards/GetCards)
      */
     public Card(JSONObject obj){
-        setId();
         name = obj.getString("Name");
         rarity = Rarity.fromInteger(obj.getInt("Rarity"));
         cost = obj.getInt("Cost");
@@ -109,19 +107,16 @@ public class Card {
         }
     }
 
-    /**
-     * Getter for id
-     * @return a unique Id to identify the card
-     */
-    public int getId(){
-        return this.id;
-    }
+    public static Card fromName(String name, Affinity affinity) throws NoSuchElementException{
+        for (Card c: allCards){
+            if (c.getName().equals(name) && c.getAffinity().equals(affinity))
+                return c;
+        }
 
-    /**
-     * Setter for id (is only used in the construction)
-     */
-    private void setId(){
-        this.id=cardCounter++;
+        System.out.println(name +"_"+ affinity);
+
+
+        throw new NoSuchElementException();
     }
 
     /**
@@ -244,51 +239,6 @@ public class Card {
         return this.orbInfo;
     }
 
-    /**
-     * Generates all possible combinations of orbs, but not the different permutations
-     * @return a list of all possible orb-combinations
-     */
-    private static List<String> comboGenerator(){
-        List<String> combos = new ArrayList<String>();
-        String orbs = "RNBS";
-
-        Map<String, Integer> priority = new HashMap<String, Integer>();
-        priority.put("R", 0);
-        priority.put("N", 1);
-        priority.put("B", 2);
-        priority.put("S", 3);
-
-        for (char one: orbs.toCharArray()){
-            String c1 = String.valueOf(one);
-            combos.add(c1);
-
-            for (char two: orbs.toCharArray()){
-                String c2 = String.valueOf(two);
-
-                if (priority.get(c2) <= priority.get(c1)){
-                    combos.add(c2+c1);
-                }
-
-                for (char three: orbs.toCharArray()){
-                    String c3 = String.valueOf(three);
-
-                    if (priority.get(c3) <= priority.get(c2) && priority.get(c2) <= priority.get(c1)){
-                        combos.add(c3+c2+c1);
-                    }
-
-                    for (char four: orbs.toCharArray()){
-                        String c4 = String.valueOf(four);
-
-                        if (priority.get(c4) <= priority.get(c3) && priority.get(c3) <= priority.get(c2) && priority.get(c2) <= priority.get(c1)){
-                            combos.add(c4+c3+c2+c1);
-                        }
-                    }
-                }
-            }
-        }
-
-        return combos;
-    }
 
     /**
      * This will create an map which contains all possible orb combinations, this is useful for
@@ -296,7 +246,7 @@ public class Card {
      * @param combos orb combinations for each tier (T1: R, N, B, S; T2: RR, RN, ...)
      * @return a HashMap which contains an empty ArrayList for each OrbCode
      */
-    private static Map<String, List<Card>> createCardLists(List<String> combos){
+    private static Map<String, List<Card>> initCardLists(List<String> combos){
         Map<String, List<Card>> cardLists = new HashMap<String, List<Card>>();
 
         for(String c: combos){
@@ -314,7 +264,7 @@ public class Card {
         String filename = this.getName().replaceAll("[)('.]", "").replace(" ", "-");
         Affinity affinity = this.getAffinity();
 
-        return (affinity==Affinity.Neutral ? filename : (filename+"_"+affinity.toString().toLowerCase())) + ".jpg";
+        return filename + (affinity==Affinity.Neutral ? "" : ("_"+affinity.toString().toLowerCase())) + ".jpg";
     }
 
     /**
@@ -374,7 +324,7 @@ public class Card {
      * @return the name of a card
      */
     public String toString(){
-        return this.affinity==Affinity.Neutral ? this.name : this.name+" ("+this.affinity.toString().toLowerCase()+")";
+        return this.name + (this.affinity==Affinity.Neutral ? "" : " ("+this.affinity.toString().toLowerCase()+")");
     }
 
     /**
