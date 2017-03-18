@@ -340,7 +340,7 @@ public class Card {
      * @return the name of a card
      */
     public String toString(){
-        return this.name + (this.affinity==Affinity.Neutral ? "" : " ("+this.affinity.toString().toLowerCase()+")");
+        return this.name + (this.affinity==Affinity.Neutral ? "" : " ("+this.affinity.toString()+")");
     }
 
     /**

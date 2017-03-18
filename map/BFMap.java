@@ -27,38 +27,45 @@ public class BFMap{
 
         for(int i=0;i<jsonDifficulties.length();i++)
         {
-            String diff = jsonDifficulties.getJSONObject(i).getString("Difficulties");
+            String diff = jsonDifficulties.getString(i);
 
             difficulties.add(Difficulty.fromString(diff));
         }
 
-        standard = new ArrayList<>();
-        JSONArray jsonStandard = obj.getJSONArray("Standard");
 
-        for(int i=0;i<jsonStandard.length();i++)
-        {
-            String cName = jsonStandard.getJSONObject(i).getString("CardName");
-            standard.add(Card.fromStringName(cName));
-        }
+            standard = new ArrayList<>();
+            JSONArray jsonStandard = obj.getJSONArray("Standard");
+
+            for (int i = 0; i < jsonStandard.length(); i++) {
+                try {
+                    String cName = jsonStandard.getJSONObject(i).getString("CardName");
+                    standard.add(Card.fromStringName(cName));
+                }
+                catch(NoSuchElementException e){}
+            }
 
 
-        advanced = new ArrayList<>();
-        JSONArray jsonAdvanced = obj.getJSONArray("Advanced");
+            advanced = new ArrayList<>();
+            JSONArray jsonAdvanced = obj.getJSONArray("Advanced");
 
-        for(int i=0;i<jsonAdvanced.length();i++)
-        {
-            String cName = jsonAdvanced.getJSONObject(i).getString("CardName");
-            advanced.add(Card.fromStringName(cName));
-        }
+            for (int i = 0; i < jsonAdvanced.length(); i++) {
+                try {
+                    String cName = jsonAdvanced.getJSONObject(i).getString("CardName");
+                    advanced.add(Card.fromStringName(cName));
+                }
+                catch(NoSuchElementException e){}
+            }
 
-        expert = new ArrayList<>();
-        JSONArray jsonExpert = obj.getJSONArray("Expert");
+            expert = new ArrayList<>();
+            JSONArray jsonExpert = obj.getJSONArray("Expert");
 
-        for(int i=0;i<jsonExpert.length();i++)
-        {
-            String cName = jsonExpert.getJSONObject(i).getString("CardName");
-            expert.add(Card.fromStringName(cName));
-        }
+            for (int i = 0; i < jsonExpert.length(); i++) {
+                try {
+                    String cName = jsonExpert.getJSONObject(i).getString("CardName");
+                    expert.add(Card.fromStringName(cName));
+                }
+                catch(NoSuchElementException e){}
+            }
 
     }
 
