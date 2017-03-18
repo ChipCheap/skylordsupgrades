@@ -1,0 +1,137 @@
+//package skylordsupgrades; change at the end
+import javafx.*;
+import javafx.application.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+public class Deckeditor extends Application {
+	Stage window;
+	Scene scene;
+	Button save, saveExit, exitNoSave, search, plusOrb, minusOrb, u1,u2,u3;
+	TextField deckName, searchB;
+	ComboBox<String> faction, type, orbs, rarity;
+			//String generic type ~
+	
+	public static void main(String[] args)
+	{
+		launch(args);
+	}
+	@Override
+	public void start(Stage stg) throws Exception 
+	{
+		window = stg;
+//		window.setOnCloseRequest(e ->
+//		{
+//			e.consume();
+//			if(CloseAlert.display("Exit?","Are you sure?"))
+//			{
+//				if(CloseAlert.display("Save?", "Save before exiting?"))
+//				{
+//					//save
+//					;
+//				}
+//				window.close();
+//			}
+//		});			readd at the end
+		window.setTitle("Deck Editor");
+		
+		//Buttons
+		exitNoSave = new Button("Discard Changes");
+		exitNoSave.setOnAction(e->
+		{
+			closeWdw(CloseAlert.display("Discard Chagnes?","Quit without saving?"));
+		});
+		save = new Button("Save");
+		save.setOnAction(e -> 
+			{
+				//save
+			});
+		saveExit = new Button("Save and exit");
+		saveExit.setOnAction(e ->
+			{
+				//save
+				closeWdw(CloseAlert.display("Save and exit?", "Are you sure?"));
+			});
+		search = new Button("Enter");
+		search.setOnAction(e->
+		{
+			//go through cardbase and filter
+		});
+		plusOrb = new Button("+");
+		minusOrb = new Button("-");
+		u1 = new Button("U1");
+		u2 = new Button("U2");
+		u3 = new Button("U3");
+		
+		//Textfields
+		deckName = new TextField();
+		deckName.setPromptText("enter a name..");
+		searchB = new TextField();
+		searchB.setMinWidth(100);
+		searchB.setPromptText("enter cardname..");
+		
+		//ComboBoxes			find out how this crap works actually
+		faction = new ComboBox();
+		type = new ComboBox();
+		orbs = new ComboBox();
+		rarity = new ComboBox();
+		
+		//sub-layouts
+		HBox filterTB = new HBox(15);
+		filterTB.setAlignment(Pos.CENTER);
+		
+		//sub-sub-layouts		start
+		HBox savB = new HBox(15);
+		savB.getChildren().addAll(save,saveExit,exitNoSave);
+		
+		VBox plusM = new VBox();			//make this small as fuck
+		plusM.getChildren().addAll(plusOrb,minusOrb);
+		
+		HBox deckSave = new HBox();
+		deckSave.getChildren().addAll(deckName, 
+				//placeholder for orb images
+				plusM,savB);
+		//end sub sub
+		
+		VBox mainComp = new VBox(10); 	//Comp(onent)
+		mainComp.getChildren().addAll(
+				//placeholder for card images  ,
+				deckSave
+				);
+		
+//		HBox subFTBL = new HBox(10);
+//		subFTBL.getChildren().addAll(searchB,search);
+//		HBox subFTBR = new HBox(10);
+//		subFTBL.getChildren().addAll(faction,orbs,type,rarity);
+		
+		filterTB.setPadding(new Insets(5,0,5,0));
+		filterTB.getChildren().addAll(searchB,search,faction,orbs,type,rarity);
+		
+		//main layout
+		BorderPane mainGrid = new BorderPane();
+		mainGrid.setTop(filterTB);
+		mainGrid.setCenter(mainComp);
+		//top toolbar	-> HBox (TextField, Button, Comboboxes(..))
+		//center VBox (main cards (-> FlowLayout), tb2) -> HBox (label, TF, HBox(4x img,VBox(2Buttons)), savB)
+		//bottom GridPane each grid (VBox (img, HBox(3 Buttons)))
+		
+		
+		scene = new Scene(mainGrid,900,600);
+		stg.setScene(scene);
+		stg.show();
+	}
+	private void closeWdw(boolean answer)
+	{
+		if(answer)		
+		window.close();		//?
+	}
+}
