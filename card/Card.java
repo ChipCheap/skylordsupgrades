@@ -113,8 +113,14 @@ public class Card {
                 return c;
         }
 
-        System.out.println(name +"_"+ affinity);
+        throw new NoSuchElementException();
+    }
 
+    public static Card fromStringName(String stringName) throws NoSuchElementException{
+        for (Card c: allCards){
+            if (c.toString().equals(stringName))
+                return c;
+        }
 
         throw new NoSuchElementException();
     }

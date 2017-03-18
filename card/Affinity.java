@@ -32,4 +32,26 @@ public enum Affinity {
                 return Unknown;
         }
     }
+
+    /**
+     * Get an Affinity from a String
+     * @param s the String
+     * @return the Affinity corresponding to a specific String
+     */
+    public static Affinity fromString(String s){
+        switch(s){
+            case "":
+                return Neutral;
+            case "Frost":
+                return Frost;
+            case "Fire":
+                return Fire;
+            case "Nature":
+                return Nature;
+            case "Shadow":
+                return Shadow;
+            default:
+                return Unknown;
+        }
+    }
 }

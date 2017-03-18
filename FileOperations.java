@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 public class FileOperations {
+    /**
+     * Checks the ./decks/ directory and uses the getDeck() method
+     * @return a HashMap containing all decks and their names
+     */
     public static Map<String, List<Card>> getAllDecks(){
         Map<String, List<Card>> deckMap = new HashMap<>();
         File dir = new File("./decks/");
@@ -39,6 +43,12 @@ public class FileOperations {
         return deckMap;
     }
 
+    /**
+     * Reads a deck from ./decks/{deckname}.deck into a list of cards
+     * @param deckname the name of the deck/file to be read
+     * @return a list of cards
+     * @throws IOException if there is an issue when opening or reading from the file
+     */
     public static List<Card> getDeck(String deckname) throws IOException{
         List<Card> deck = new ArrayList<>();
         DataInputStream dis = getDataInputStreamOnFile("./decks/" + deckname + ".deck");
@@ -49,6 +59,12 @@ public class FileOperations {
         return deck;
     }
 
+    /**
+     * Write a deck to ./decks/{deckname}.deck
+     * @param deckname name of the deck
+     * @param deck list of cards in the deck
+     * @throws IOException if there is an issue when opening or writing from the file
+     */
     public static void writeDeck(String deckname, List<Card> deck) throws IOException{
         DataOutputStream dos;
 
@@ -75,7 +91,11 @@ public class FileOperations {
         dos.close();
     }
 
-
+    /**
+     * Get all data regarding card upgrades from ./upgraded.dat and put them into a list of UpgradedCards
+     * @return a list of UpgradedCards
+     * @throws IOException if there is an issue when opening or reading from the file
+     */
     public static List<UpgradedCard> getUpgradedData() throws IOException{
         List<UpgradedCard> result = new ArrayList<>();
 
@@ -90,6 +110,11 @@ public class FileOperations {
         return result;
     }
 
+    /**
+     * Write the data regarding card upgrades from a list of UpgradedCards into ./upgraded.dat
+     * @param upgradedCards a list of UpgradedCards
+     * @throws IOException if there is an issue when opening or writing from the file
+     */
     public static void writeUpgradedData(List<UpgradedCard> upgradedCards) throws IOException{
         DataOutputStream dos = getDataOutputStreamOnFile("./upgraded.dat");
 
@@ -104,6 +129,10 @@ public class FileOperations {
         dos.close();
     }
 
+    /**
+     * Generate a list of UpgradedCards with all upgrades set to false
+     * @return a default list of UpgradedCards
+     */
     public static List<UpgradedCard> getDefaultUpgradedCardList(){
         List<UpgradedCard> result = new ArrayList<>();
 
@@ -113,6 +142,7 @@ public class FileOperations {
 
         return result;
     }
+
 
     private static DataOutputStream getDataOutputStreamOnFile(String filepath) throws FileNotFoundException{
         return new DataOutputStream(new BufferedOutputStream(new FileOutputStream(new File(filepath))));
