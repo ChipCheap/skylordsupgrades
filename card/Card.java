@@ -46,66 +46,76 @@ public class Card {
 
         abilities = new ArrayList<Ability>();
 
-        for (int i = 0; i < obj.getJSONArray("Abilities").length(); i++) {
-            String name =
-                    obj.getJSONArray("Abilities").getJSONObject(i).isNull("Name")
-                            ? "" :
-                    obj.getJSONArray("Abilities").getJSONObject(i).getString("Name");
+        JSONArray jsonabilities = obj.getJSONArray("Abilities");
 
-            AbilityType type =
-                    obj.getJSONArray("Abilities").getJSONObject(i).isNull("Type")
-                            ? AbilityType.Unknown :
-                    AbilityType.fromInteger(obj.getJSONArray("Abilities")
-                            .getJSONObject(i).getInt("Type"));
+        for (int i = 0; i < jsonabilities.length(); i++) {
 
-            int power =
-                    obj.getJSONArray("Abilities").getJSONObject(i).isNull("Power")
-                            ? 0 :
-                    obj.getJSONArray("Abilities").getJSONObject(i).getInt("Power");
+            String name = jsonabilities.getJSONObject(i).isNull("Name")
+                            ? ""
+                            : jsonabilities.getJSONObject(i).getString("Name");
 
-            String description =
-                    obj.getJSONArray("Abilities").getJSONObject(i).isNull("Description")
-                            ? "" :
-                    obj.getJSONArray("Abilities").getJSONObject(i).getString("Description");
+
+            AbilityType type = jsonabilities.getJSONObject(i).isNull("Type")
+                            ? AbilityType.Unknown
+                            : AbilityType.fromInteger(jsonabilities.getJSONObject(i).getInt("Type"));
+
+
+            int power = jsonabilities.getJSONObject(i).isNull("Power")
+                            ? 0
+                            : jsonabilities.getJSONObject(i).getInt("Power");
+
+
+            String description = jsonabilities.getJSONObject(i).isNull("Description")
+                            ? ""
+                            : jsonabilities.getJSONObject(i).getString("Description");
+
 
             abilities.add(new Ability(name, type, power, description));
         }
 
 
         upgrades = new ArrayList<Upgrade>();
+        JSONArray jsonupgrades = obj.getJSONArray("Upgrades");
 
-        for (int i = 0; i < obj.getJSONArray("Upgrades").length(); i++) {
-                String desc = obj.getJSONArray("Upgrades").getJSONObject(i).isNull("Description") ? "" :
-                        obj.getJSONArray("Upgrades").getJSONObject(i).getString("Description");
+        for (int i = 0; i < jsonupgrades.length(); i++) {
 
-                int era = obj.getJSONArray("Upgrades").getJSONObject(i).isNull("Era") ? 0 :
-                        obj.getJSONArray("Upgrades").getJSONObject(i).getInt("Era");
+                String desc = jsonupgrades.getJSONObject(i).isNull("Description")
+                        ? ""
+                        : jsonupgrades.getJSONObject(i).getString("Description");
+
+                int era = jsonupgrades.getJSONObject(i).isNull("Era")
+                        ? 0
+                        : jsonupgrades.getJSONObject(i).getInt("Era");
 
                 //Check if map is null
-                boolean mapIsNull = obj.getJSONArray("Upgrades").getJSONObject(i).isNull("Map");
+                boolean mapIsNull = jsonupgrades.getJSONObject(i).isNull("Map");
 
-                String mapName = mapIsNull ? "" : obj.getJSONArray("Upgrades").getJSONObject(i)
-                        .getJSONObject("Map").getString("Name");
+                String mapName = mapIsNull
+                        ? ""
+                        : jsonupgrades.getJSONObject(i).getJSONObject("Map").getString("Name");
 
-                Difficulty mapDif = mapIsNull ? Difficulty.Unknown : Difficulty.fromInteger(obj.
-                        getJSONArray("Upgrades").getJSONObject(i).getJSONObject("Map").getInt("Difficulty"));
+                Difficulty mapDif = mapIsNull
+                        ? Difficulty.Unknown
+                        : Difficulty.fromInteger(jsonupgrades.getJSONObject(i).getJSONObject("Map").getInt("Difficulty"));
 
             upgrades.add(new Upgrade(desc, era, mapName, mapDif));
         }
 
         if(!obj.isNull("OrbInfo")) {
+            JSONObject jsonOrbInfo = obj.getJSONObject("OrbInfo");
             this.orbInfo = new OrbInfo(
-                    obj.getJSONObject("OrbInfo").getString("OrbCode"),
-                    obj.getJSONObject("OrbInfo").getInt("Neutral"),
-                    obj.getJSONObject("OrbInfo").getInt("Fire"),
-                    obj.getJSONObject("OrbInfo").getInt("Nature"),
-                    obj.getJSONObject("OrbInfo").getInt("Frost"),
-                    obj.getJSONObject("OrbInfo").getInt("Shadow"));
+                    jsonOrbInfo.getString("OrbCode"),
+                    jsonOrbInfo.getInt("Neutral"),
+                    jsonOrbInfo.getInt("Fire"),
+                    jsonOrbInfo.getInt("Nature"),
+                    jsonOrbInfo.getInt("Frost"),
+                    jsonOrbInfo.getInt("Shadow"));
         }
         else{
             this.orbInfo = new OrbInfo("", 0, 0, 0, 0, 0);
         }
     }
+
 
     public static Card fromName(String name, Affinity affinity) throws NoSuchElementException{
         for (Card c: allCards){

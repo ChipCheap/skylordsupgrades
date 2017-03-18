@@ -23,4 +23,22 @@ public enum Difficulty {
                 return Unknown;
         }
     }
+
+    /**
+     * Get a Difficulty from a String
+     * @param s the String
+     * @return the Difficulty corresponding to a specific String
+     */
+    public static Difficulty fromString(String s){
+        switch(s){
+            case "Standard":
+                return Standard;
+            case "Advanced":
+                return Advanced;
+            case "Expert":
+                return Expert;
+            default:
+                return Unknown;
+        }
+    }
 }

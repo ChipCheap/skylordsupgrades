@@ -2,90 +2,92 @@ package skylordtools.map;
 
 import java.util.*;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import skylordtools.card.Card;	//incase we have standard, advanced, expert as cards instead of strings
+import skylordtools.card.Card;
 
 
 public class BFMap{
     private String name;
     private String description;
-    private List<String> difficulties;
-    private List<String> standard;
-    private List<String> advanced;
-    private List<String> expert;
+    private List<Difficulty> difficulties;
+    private List<Card> standard;
+    private List<Card> advanced;
+    private List<Card> expert;
     private int players;
 
     public BFMap(JSONObject obj){
         name = obj.getString("Name");
         description = obj.getString("Description");
         players = obj.getInt("Players");
-        
-        difficulties = new ArrayList<String>();
-        for(int i=0;i<obj.getJSONArray("Difficulties").length();i++)
+
+        difficulties = new ArrayList<>();
+        JSONArray jsonDifficulties = obj.getJSONArray("Difficulties");
+
+        for(int i=0;i<jsonDifficulties.length();i++)
         {
-        	String diff =
-        			obj.getJSONArray("Difficulties").getJSONObject(i).getString("Difficulties");
-        	difficulties.add(diff);
+            String diff = jsonDifficulties.getJSONObject(i).getString("Difficulties");
+
+            difficulties.add(Difficulty.fromString(diff));
         }
-        
-        standard = new ArrayList<String>();
-        for(int i=0;i<obj.getJSONArray("Standard").length();i++)
+
+        standard = new ArrayList<>();
+        JSONArray jsonStandard = obj.getJSONArray("Standard");
+
+        for(int i=0;i<jsonStandard.length();i++)
         {
-        	String cName = 
-        			obj.getJSONArray("Standard").getJSONObject(i).isNull("CardName")
-        				? ""
-        			:obj.getJSONArray("Standard").getJSONObject(i).getString("CardName");
-        	standard.add(cName);
+            String cName = jsonStandard.getJSONObject(i).getString("CardName");
+            standard.add(Card.fromStringName(cName));
         }
-        
-        advanced = new ArrayList<String>();
-        for(int i=0;i<obj.getJSONArray("Advanced").length();i++)
+
+
+        advanced = new ArrayList<>();
+        JSONArray jsonAdvanced = obj.getJSONArray("Advanced");
+
+        for(int i=0;i<jsonAdvanced.length();i++)
         {
-        	String cName = 
-        			obj.getJSONArray("Advanced").getJSONObject(i).isNull("CardName")
-        				? ""
-        			:obj.getJSONArray("Advanced").getJSONObject(i).getString("CardName");
-        	advanced.add(cName);
+            String cName = jsonAdvanced.getJSONObject(i).getString("CardName");
+            advanced.add(Card.fromStringName(cName));
         }
-        
-        expert = new ArrayList<String>();
-        for(int i=0;i<obj.getJSONArray("Expert").length();i++)
+
+        expert = new ArrayList<>();
+        JSONArray jsonExpert = obj.getJSONArray("Expert");
+
+        for(int i=0;i<jsonExpert.length();i++)
         {
-        	String cName = 
-        			obj.getJSONArray("Expert").getJSONObject(i).isNull("CardName")
-        				? ""
-        			:obj.getJSONArray("Expert").getJSONObject(i).getString("CardName");
-        	expert.add(cName);
+            String cName = jsonExpert.getJSONObject(i).getString("CardName");
+            expert.add(Card.fromStringName(cName));
         }
+
     }
-    
-    public String Name()
+
+    public String getName()
     {
-    	return this.name;
+        return this.name;
     }
-    public String Description()
+    public String getDescription()
     {
-    	return this.description;
+        return this.description;
     }
-    public int Players()
+    public int getPlayers()
     {
-    	return this.players;
+        return this.players;
     }
-    public List<String> Difficulties()
+    public List<Difficulty> getDifficulties()
     {
-    	return this.difficulties;
+        return this.difficulties;
     }
-    public List<String> Standard()
+    public List<Card> getStandard()
     {
-    	return this.standard;
+        return this.standard;
     }
-    public List<String> Advanced()
+    public List<Card> getAdvanced()
     {
-    	return this.advanced;
+        return this.advanced;
     }
-    public List<String> Expert()
+    public List<Card> getExpert()
     {
-    	return this.expert;
+        return this.expert;
     }
 }
